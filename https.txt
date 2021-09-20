@@ -1,0 +1,68 @@
+///////////////////////.env
+PORT=5000
+HTTPS=true
+MONGO_URI=mongodb+srv://user1234:user1234@mini-mern.w8ofu.mongodb.net/shop?retr>
+SSL_CRT_FILE=/etc/letsencrypt/live/gmpmafia.com-0002/fullchain.pem
+SSL_KEY_FILE=/etc/letsencrypt/live/gmpmafia.com-0002/privkey.pem
+
+#SSL_CRT_FILE=/usr/local/share/ca-certificates/cert.pem
+#SSL_KEY_FILE=/usr/local/share/ca-certificates/key.pem
+EMAIL=gmp.mafia@gmail.com
+PASSWORD=shake181567
+
+
+
+
+///////////////////////frontend .env
+
+DANGEROUSLY_DISABLE_HOST_CHECK=true
+HTTPS=true
+SSL_CRT_FILE=/etc/letsencrypt/live/gmpmafia.com-0002/fullchain.pem
+SSL_KEY_FILE=/etc/letsencrypt/live/gmpmafia.com-0002/privkey.pem
+
+#SSL_CRT_FILE=/usr/local/share/ca-certificates/cert.pem
+#SSL_KEY_FILE=/usr/local/share/ca-certificates/key.pem
+
+
+
+
+run react on 443 (in node modules)
+
+
+
+
+//////////////////////////////////// backend/server.js
+
+require("dotenv").config();
+const express = require("express");
+const productRoutes = require("./routes/productRoutes");
+const connectDB = require("./config/db");
+const https = require('https');
+const fs = require('fs');
+
+connectDB();
+
+const Mail = require('./routes/mail')
+const PORT = 5000;
+const app = express();
+
+app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.json({ message: "API running..." });
+});
+
+app.use("/api/products", productRoutes);
+
+app.use("/api/sendmail", Mail)
+
+const options = {
+    cert: fs.readFileSync('/etc/letsencrypt/live/gmpmafia.com-0002/fullchain.pe>
+    key: fs.readFileSync('/etc/letsencrypt/live/gmpmafia.com-0002/privkey.pem')
+};
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+https.createServer(options, app).listen(8443);
+
+
+
